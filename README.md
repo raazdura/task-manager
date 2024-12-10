@@ -30,7 +30,7 @@ Welcome to the Task Manager Web App repository! This project provides a responsi
 1. Clone the repository to your local machine:
 
    ```bash
-   git clone https://github.com/your-username/task-manager-web-app.git
+   git clone https://github.com/yraazdura/task-manager-web-app.git
 Open the project folder in your code editor.
 
 Frontend
