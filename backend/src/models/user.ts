@@ -66,8 +66,12 @@ UserSchema.methods.matchPassword = async function (password: string): Promise<bo
 
 // Instance method: Generate signed JWT
 UserSchema.methods.getSignedToken = function (): string {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET || "8124d6efd18d07788385eb5ac3d94d4cdfa9ba619c2c7f63b091eab6e9f8efe6d22674", {
-    expiresIn: process.env.JWT_EXPIRE || "10min",
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in the environment variables");
+  }
+
+  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRE || "1h",
   });
 };
 

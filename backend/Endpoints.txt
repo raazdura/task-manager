@@ -1,0 +1,109 @@
+Task Routes
+root route: /api/tasks
+
+Create a Task
+
+Method: POST
+Endpoint: /tasks
+Description: Creates a new task.
+Request Body: Task details (e.g., title, description, deadline, etc.).
+Update a Task
+
+Method: PUT
+Endpoint: /update
+Description: Updates an existing task.
+Request Body: Task update data (e.g., title, description, etc.).
+Update Task Title
+
+Method: PUT
+Endpoint: /tasks/:taskId/title
+Description: Updates the title of a specific task.
+URL Parameter: taskId (ID of the task to update).
+Request Body: New title.
+Update Task Description
+
+Method: PUT
+Endpoint: /tasks/:taskId/description
+Description: Updates the description of a specific task.
+URL Parameter: taskId (ID of the task to update).
+Request Body: New description.
+Update Task Deadline
+
+Method: PUT
+Endpoint: /tasks/:taskId/deadline
+Description: Updates the deadline of a specific task.
+URL Parameter: taskId (ID of the task to update).
+Request Body: New deadline.
+Update Task Status
+
+Method: PUT
+Endpoint: /:taskId/status
+Description: Updates the status of a specific task.
+URL Parameter: taskId (ID of the task to update).
+Request Body: New status.
+Delete a Task
+
+Method: DELETE
+Endpoint: /:taskId
+Description: Deletes a specific task.
+URL Parameter: taskId (ID of the task to delete).
+Fetch List of Tasks
+
+Method: GET
+Endpoint: /tasks
+Description: Fetches a list of all tasks.
+Search Tasks by Title
+
+Method: POST
+Endpoint: /search
+Description: Searches for tasks by their title.
+Request Body: Search query (e.g., title).
+
+
+User Routes
+root route: api/users
+
+Register User
+
+Method: POST
+Endpoint: /register
+Description: Registers a new user.
+Request Body: User details (e.g., name, email, password).
+User Login
+
+Method: POST
+Endpoint: /login
+Description: Logs in an existing user.
+Request Body: Login credentials (e.g., email, password).
+Get User Details
+
+Method: GET
+Endpoint: /userdetails/:id
+Description: Fetches details of a specific user.
+URL Parameter: id (ID of the user).
+Update User
+
+Method: PATCH
+Endpoint: /update/:id
+Description: Updates user information.
+URL Parameter: id (ID of the user to update).
+Request Body: Updated user details.
+Get User's Tasks
+
+Method: GET
+Endpoint: /user/:userId/tasks
+Description: Fetches all tasks associated with a specific user.
+URL Parameter: userId (ID of the user whose tasks are to be retrieved).
+Forgot Password
+
+Method: PATCH
+Endpoint: /forgotpassword
+Description: Initiates the forgot password process.
+Request Body: Email of the user.
+Reset Password
+
+Method: POST
+Endpoint: /resetpassword/:resetToken
+Description: Resets the user's password using a token.
+URL Parameter: resetToken (Token for password reset).
+Request Body: New password.

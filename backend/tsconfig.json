@@ -1,17 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES6",
-    "module": "CommonJS",
+    "target": "ES2020",
+    "module": "commonjs",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "baseUrl": "./src",   // Set baseUrl to the `src` folder
-    "paths": {
-      "*": ["node_modules/*"]
-    },
+    "outDir": "./dist"
   },
-  "include": ["src/**/*.ts"],  // Includes all TypeScript files inside the `src` directory
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "src/types.d.ts"]
 }
+

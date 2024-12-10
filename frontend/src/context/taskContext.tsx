@@ -20,7 +20,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   };
 
   const addTask = (newTask: Task) => {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setTasks((prevTasks) => [newTask, ...prevTasks ]);
   };
 
   // Update an existing task (by _id)

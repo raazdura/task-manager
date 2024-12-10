@@ -50,7 +50,7 @@ function AddTask({ closeAdd }: AddProps) {
   };
 
   return (
-    <div className="w-1/3 rounded-lg bg-light-1 bg-gray-900 text-gray-200 p-4">
+    <div className="w-screen h-2/4 md:h-1/3 md:w-1/3 rounded-lg bg-light-1 bg-gray-900 text-gray-200 p-4">
       <p className="text-center text-xl text-white font-bold leading-8">Add Task</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
         {/* Task Input Field */}

@@ -72,10 +72,11 @@ function TaskList() {
   };
 
   return (
-    <div className="overflow-x-auto mt-4 bg-gray-900 rounded-lg">
+    <div className="overflow-x-auto sm:m-0 lg:mt-4 bg-gray-900 rounded-lg">
       <table className="min-w-full bg-gray-800 text-gray-200 border border-gray-700">
         <thead>
           <tr>
+            <th className="px-4 py-2 border-b border-gray-600 text-left">S.N.</th>
             <th className="px-4 py-2 border-b border-gray-600 text-left">Task Title</th>
             <th className="px-4 py-2 border-b border-gray-600 text-left">Description</th>
             <th className="px-4 py-2 border-b border-gray-600 text-left">Deadline</th>
@@ -84,17 +85,18 @@ function TaskList() {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
+          {tasks.map((task, i) => (
             <tr key={task._id} className="hover:bg-gray-700">
-              <td className="px-4 py-2 border-b border-gray-600">{task.title}</td>
-              <td className="px-4 py-2 border-b border-gray-600">{task.description}</td>
-              <td className="px-4 py-2 border-b border-gray-600">{convertToLocalTime(task.deadline)}</td>
-              <td className="px-4 py-2 border-b border-gray-600">
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">{i + 1}</td>
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">{task.title}</td>
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">{task.description}</td>
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">{convertToLocalTime(task.deadline)}</td>
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">
                 <span className={`py-1 px-3 rounded-md text-semibold ${task.status === "completed" ? "bg-green-500" : "bg-yellow-500"}`}>
                   {task.status}
                 </span>
               </td>
-              <td className="px-4 py-2 border-b border-gray-600">
+              <td className="sm:p-2 md:px-4 sm:py-2 md:py-2 border-b border-gray-600">
                 <button onClick={() => openEditModel(task)} className="bg-blue-500 text-white py-1 px-3 rounded-md mr-2">Edit</button>
                 <button onClick={() => openDeleteModal(task)} className="bg-red-500 text-white py-1 px-3 rounded-md mr-2">Delete</button>
                 <button onClick={() => handleComplete(task)} className="bg-green-500 text-white py-1 px-3 rounded-md">Complete</button>

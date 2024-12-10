@@ -15,10 +15,10 @@ interface LoginFormData {
 // Function to send signup data
 export const signupUser = async (formData: SignupFormData) => {
   try {
-    console.log(formData);
     const response = await axiosInstance.post("/user/register", formData);
     return response.data; // Return response from the server
   } catch (error: any) {
+    console.log(error);
     throw error.response?.data?.message || "An error occurred";
   }
 };

@@ -27,6 +27,7 @@ function Signup() {
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
     try {
       const response = await signupUser(data);
+      console.log(response);
       if (response.token) {
         localStorage.setItem("token", response.token);
         localStorage.setItem("userId", response.user?._id);
@@ -147,17 +148,17 @@ function Signup() {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold"
+          className="w-full rounded-md bg-purple-400 p-3 mt-4 text-center text-gray-900 font-semibold"
         >
           Sign Up
         </button>
       </form>
 
-      <p className="mt-6 text-center text-xs text-gray-400">
+      <p className="mt-6 text-center text-sm text-gray-400">
         Already have an account?
         <a
           href="/login"
-          className="text-black hover:underline hover:text-purple-400"
+          className="text-gray-400 hover:underline hover:text-purple-400"
         >
           Log in
         </a>

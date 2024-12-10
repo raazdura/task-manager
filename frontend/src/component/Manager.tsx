@@ -7,7 +7,7 @@ import TaskList from "./TaskList";
 import { FaSearch } from "react-icons/fa";
 import { userTasks } from "../services/authService";
 import { TaskContext } from "../context/taskContext"; // Import TaskContext
-import { toast } from "react-toastify"; // Import toast for notifications
+// import { toast } from "react-toastify"; // Import toast for notifications
 import { ToastContainer } from "react-toastify"; // Import ToastContainer
 
 interface SearchFormData {
@@ -48,9 +48,10 @@ function Manager() {
       const response = await searchTasks(searchData);
       saveTask(response.tasks);
       console.log(response);
-      toast.success("Tasks fetched successfully!");
+      // toast.success("Tasks fetched successfully!");
     } catch (error: any) {
-      toast.error(`Failed to search tasks: ${error.message}`);
+      // toast.error(`Failed to search tasks: ${error.message}`);
+      console.log(`Failed to search tasks: ${error.message}`);
     }
   };
 
@@ -98,8 +99,8 @@ function Manager() {
   console.log("Total Pages:", totalPages);
 
   return (
-    <div className="w-screen h-screen p-16 flex justify-center items-center">
-      <div className="w-full bg-gray-900 p-6 shadow-lg rounded-lg text-center">
+    <div className="w-screen h-screen md:p-16 flex justify-center items-center">
+      <div className="w-full bg-gray-900 p-2 md:p-4 shadow-lg rounded-lg text-center">
         <h1 className="text-xl text-white font-bold mb-4">Manage Tasks</h1>
         <div className="w-full text-right font-semibold text-lg m-4">
           <button
@@ -110,11 +111,11 @@ function Manager() {
           </button>
         </div>
         <div className="flex justify-between items-center w-full">
-          <div className="filter bg-gray-900">
+          <div className="filter bg-gray-900 py-2">
             <select
               name="filter"
               id="filter"
-              className="bg-gray-800 text-white"
+              className="bg-gray-800 text-white p-1 rounded"
               value={filter}
               onChange={handleFilterChange}
             >

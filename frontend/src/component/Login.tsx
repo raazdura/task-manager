@@ -76,16 +76,16 @@ function Login() {
         </div>
         <button
           type="submit"
-          className="w-full rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold"
+          className="w-full rounded-md bg-purple-400 p-3 mt-4 text-center text-gray-900 font-semibold"
         >
           Log in
         </button>
       </form>
-      <p className="mt-6 text-center text-xs text-gray-400">
+      <p className="mt-6 text-center text-sm text-gray-400">
         Don't have an account?
         <a
           href="/signup"
-          className="text-black hover:underline hover:text-purple-400"
+          className="text-gray-400 hover:underline hover:text-purple-400"
         >
           Sign up
         </a>
