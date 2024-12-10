@@ -1,47 +1,56 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { loginUser } from "../services/authService";
+import { toast } from "react-toastify"; 
+import { useNavigate } from "react-router-dom"; 
 
 // Define the form data type
 interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
 function Login() {
+  const navigate = useNavigate();
+  
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<LoginFormData>();
 
   const onSubmit: SubmitHandler<LoginFormData> = async (data) => {
     try {
       const response = await loginUser(data);
-      alert("Signup Successful!"); // Display success message
-      console.log(response); // Handle the response
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", response.user?._id);
+        toast.success("Login Successful!"); // Success toast
+        navigate("/");
+      } else {
+        toast.error("Login Failed: No token received."); // Error toast
+      }
     } catch (error: any) {
-      alert(`Signup Failed: ${error}`);
+      toast.error(`Login Failed: ${error.message}`); // Error toast
     }
   };
 
   return (
-    <div className="w-80 rounded-lg bg-gray-900 p-8 text-gray-200">
-      <p className="text-center text-xl font-bold leading-8">Log In</p>
+    <div className="w-80 rounded-lg bg-gray-900 p-8 text-black">
+      <p className="text-center text-xl font-bold leading-8 text-white">Log In</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
         <div className="mb-4 text-sm leading-5">
-          <label htmlFor="username" className="block text-gray-400 mb-1">
-            Username
+          <label htmlFor="email" className="block text-gray-400 mb-1">
+            Email
           </label>
           <input
             type="text"
-            id="username"
-            {...register("username", { required: "Username is required" })}
+            id="email"
+            {...register("email", { required: "Email is required" })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className="w-full rounded-md border p-3 text-black focus:outline-none"
           />
-          {errors.username && (
-            <p style={{ color: "red" }}>{errors.username.message}</p>
+          {errors.email && (
+            <p style={{ color: "red" }}>{errors.email.message}</p>
           )}
         </div>
         <div className="mb-4 text-sm leading-5">
@@ -59,21 +68,24 @@ function Login() {
               },
             })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className="w-full rounded-md border p-3 text-black focus:outline-none"
           />
           {errors.password && (
             <p style={{ color: "red" }}>{errors.password.message}</p>
           )}
         </div>
-        <button type="submit" className="w-full rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold">
+        <button
+          type="submit"
+          className="w-full rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold"
+        >
           Log in
         </button>
       </form>
       <p className="mt-6 text-center text-xs text-gray-400">
         Don't have an account?
         <a
-          href="#"
-          className="text-gray-200 hover:underline hover:text-purple-400"
+          href="/signup"
+          className="text-black hover:underline hover:text-purple-400"
         >
           Sign up
         </a>

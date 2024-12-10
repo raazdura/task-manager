@@ -1,17 +1,30 @@
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import React from "react";
 
 function Navigation() {
+  const navigate = useNavigate(); // Initialize useNavigate hook
+
+  const handleLogout = () => {
+    // Clear user session data from localStorage
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+
+    // Redirect to login page
+    navigate("/login");
+  };
 
   return (
-    <div className=" fixed w-screen h-16 dark:bg-dark">
-      <nav className="mx-4 flex justify-between items-center text-white" >
-        <h1>Task Manager</h1>
+    <div className="w-screen absolute top-0 bg-gray-900">
+      <nav className="mx-10 p-4 flex justify-between items-center text-white font-semibold">
+        <h1 className="text-2xl">Task Manager</h1>
         <div className="flex gap-4">
-            <h1>Dark/Light</h1>
-            <h1>Notification</h1>
-            <h1>Profile</h1>
+          <button
+            onClick={handleLogout} // Call handleLogout on button click
+            className="text-lg px-4 py-2 bg-red-600 rounded-md hover:bg-red-700 transition"
+          >
+            Logout
+          </button>
         </div>
-
       </nav>
     </div>
   );

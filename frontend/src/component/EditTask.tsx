@@ -1,59 +1,72 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useEffect } from "react";
 import { useContext } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { editTask } from "../services/taskServices";
 import { TaskContext } from "../context/taskContext"; // import your Tasks context
-import { addTask as addTaskService } from "../services/taskServices";
 import { toast } from "react-toastify"; // Import toast
 
 // Define the form data type
-interface TaskFormData {
-  userId: string;
+interface EditTaskFormData {
+  _id: string;
   title: string;
   description: string;
   deadline: string;
+  status: string;
 }
 
-interface AddProps {
-  closeAdd: () => void;
+interface EditProps {
+  task: {
+    _id: string;
+    title: string;
+    description: string;
+    deadline: string;
+    status: string;
+  };
+  closeEdit: () => void;
 }
 
-function AddTask({ closeAdd }: AddProps) {
-  const { addTask } = useContext(TaskContext); // Access the context
+function EditTask({ task, closeEdit }: EditProps) {
+  const { updateEditedTask } = useContext(TaskContext); // Access the context
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
-  } = useForm<TaskFormData>();
+  } = useForm<EditTaskFormData>();
 
-  const userId = localStorage.getItem("userId");
+  useEffect(() => {
+    reset({
+      title: task.title,
+      description: task.description,
+      deadline: task.deadline.slice(0, 16),
+      status: task.status,
+    });
+  }, [task, reset]);
 
-  const onSubmit: SubmitHandler<TaskFormData> = async (data) => {
+  const onSubmit: SubmitHandler<EditTaskFormData> = async (data) => {
     try {
-      if (!userId) {
-        toast.error("User ID not found. Please log in to add tasks."); // Show error toast
-        return;
-      }
-
-      const taskData = { ...data, userId };
-      const response = await addTaskService(taskData);
-      toast.success("Task Added Successfully!"); // Show success toast
+      const taskId = task._id;
+      const taskData = { ...data, taskId };
+      const response = await editTask(taskData);
+      toast.success("Task Edited Successfully!"); // Show success toast
       console.log(response);
 
-      // Update the context with the new task
-      addTask(response.task);
+      // Update the context with the edited task
+      updateEditedTask(response.task);
 
-      closeAdd();
+      closeEdit();
     } catch (error: any) {
-      toast.error(`Failed to add task: ${error}`); // Show error toast
-      closeAdd();
+      toast.error(`Failed to edit task: ${error}`); // Show error toast
+      closeEdit();
     }
   };
 
   return (
-    <div className="w-1/3 rounded-lg bg-light-1 bg-gray-900 text-gray-200 p-4">
-      <p className="text-center text-xl text-white font-bold leading-8">Add Task</p>
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
-        {/* Task Input Field */}
+    <div className="rounded-lg w-1/3 bg-gray-900 text-gray-200 p-4">
+      <p className="text-center text-xl font-bold leading-8">Edit Task</p>
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-6 text-left">
+        {/* Task Title Field */}
         <div className="mb-4 text-sm leading-5">
           <label htmlFor="title" className="block text-gray-400 mb-1">
             Task's Title
@@ -61,11 +74,11 @@ function AddTask({ closeAdd }: AddProps) {
           <input
             type="text"
             id="title"
-            {...register("title", { required: "title is required" })}
+            {...register("title", { required: "Title is required" })}
             placeholder="Enter your title"
             className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
           />
-          {errors.title && <p style={{ color: "red" }}>{errors.title.message}</p>}
+          {errors.title && <p className="text-red-500">{errors.title.message}</p>}
         </div>
 
         {/* Description Field */}
@@ -75,16 +88,16 @@ function AddTask({ closeAdd }: AddProps) {
           </label>
           <textarea
             id="description"
-            {...register("description", { required: "description is required" })}
-            placeholder="Enter your description"
+            {...register("description", { required: "Description is required" })}
+            placeholder="Enter description"
             className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
           />
           {errors.description && (
-            <p style={{ color: "red" }}>{errors.description.message}</p>
+            <p className="text-red-500">{errors.description.message}</p>
           )}
         </div>
 
-        {/* Deadline Input Field */}
+        {/* Deadline Field */}
         <div className="mb-4 text-sm leading-5">
           <label htmlFor="deadline" className="block text-gray-400 mb-1">
             Deadline
@@ -96,16 +109,16 @@ function AddTask({ closeAdd }: AddProps) {
             className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
           />
           {errors.deadline && (
-            <p style={{ color: "red" }}>{errors.deadline.message}</p>
+            <p className="text-red-500">{errors.deadline.message}</p>
           )}
         </div>
 
-        {/* Submit Button */}
+        {/* Submit and Cancel Buttons */}
         <div className="w-full text-right">
           <button
-            type="submit"
-            onClick={closeAdd}
-            className="rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold m-4"
+            type="button"
+            onClick={closeEdit}
+            className="rounded-md bg-gray-600 p-3 text-center text-gray-200 font-semibold m-4"
           >
             Cancel
           </button>
@@ -121,4 +134,4 @@ function AddTask({ closeAdd }: AddProps) {
   );
 }
 
-export default AddTask;
+export default EditTask;

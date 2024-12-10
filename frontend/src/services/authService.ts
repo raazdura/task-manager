@@ -8,7 +8,7 @@ interface SignupFormData {
 }
 
 interface LoginFormData {
-  username: string;
+  email: string;
   password: string;
 }
 
@@ -16,7 +16,7 @@ interface LoginFormData {
 export const signupUser = async (formData: SignupFormData) => {
   try {
     console.log(formData);
-    const response = await axiosInstance.post("/auth/signup", formData);
+    const response = await axiosInstance.post("/user/register", formData);
     return response.data; // Return response from the server
   } catch (error: any) {
     throw error.response?.data?.message || "An error occurred";
@@ -27,9 +27,35 @@ export const signupUser = async (formData: SignupFormData) => {
 export const loginUser = async (formData: LoginFormData) => {
   try {
     console.log(formData);
-    const response = await axiosInstance.post("/auth/login", formData);
+    const response = await axiosInstance.post("/user/login", formData);
     return response.data; // Return response from the server
   } catch (error: any) {
     throw error.response?.data?.message || "An error occurred";
   }
 };
+
+export const userDetails = async (userId: string) => {
+  try {
+    console.log(userId);
+    const response = await axiosInstance.get(`user/${userId}`);
+    return response.data;
+  } catch (error: any) {
+    throw error.response?.data?.message || "An error occurred";
+  }
+};
+
+export const userTasks = async (limit: number, offset: number, userId: string, filter: string) => {
+  try {
+    // console.log("Fetching Tasks with offset:", offset, "limit:", limit, "userId:", userId);
+    const response = await axiosInstance.get(`user/user/${userId}/tasks`, {
+      params: { limit, offset, filter }, // Pass limit and offset as query params
+    });
+    return response.data; // Return response from the server
+  } catch (error: any) {
+    throw error.response?.data?.message || "An error occurred while fetching tasks.";
+  }
+};
+
+
+
+

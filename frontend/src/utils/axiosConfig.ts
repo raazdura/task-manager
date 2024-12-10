@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base Axios instance
 const axiosInstance = axios.create({
-  baseURL: "https://your-backend-api.com/api", // Replace with your backend API URL
+  baseURL: "http://localhost:7000/api/", // Replace with your backend API URL
   timeout: 5000,
 });
 

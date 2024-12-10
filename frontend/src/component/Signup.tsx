@@ -1,5 +1,7 @@
 import { useForm, SubmitHandler } from "react-hook-form";
 import { signupUser } from "../services/authService";
+import { toast } from "react-toastify"; 
+import { useNavigate } from "react-router-dom"; 
 
 // Define the form data type
 interface SignupFormData {
@@ -10,6 +12,8 @@ interface SignupFormData {
 }
 
 function Signup() {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -17,20 +21,30 @@ function Signup() {
     formState: { errors },
   } = useForm<SignupFormData>();
 
+  // Watch password value for confirm password validation
+  const password = watch("password");
+
   const onSubmit: SubmitHandler<SignupFormData> = async (data) => {
     try {
       const response = await signupUser(data);
-      alert("Signup Successful!"); // Display success message
-      console.log(response); // Handle the response
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("userId", response.user?._id);
+        toast.success("Signup Successful!"); 
+        navigate('/');
+      } else {
+        toast.error("Signup Failed: No token received."); // Error toast
+      }
     } catch (error: any) {
-      alert(`Signup Failed: ${error}`);
+      toast.error(`Signup Failed: ${error.message}`); // Error toast
     }
   };
 
   return (
-    <div className="w-80 rounded-lg bg-gray-900 p-8 text-gray-200">
-      <p className="text-center text-xl font-bold leading-8">Sign Up</p>
+    <div className="w-80 mt-14 rounded-lg bg-gray-900 p-8 text-black">
+      <p className="text-center text-xl font-bold leading-8 text-white">Sign Up</p>
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
+        {/* Username Field */}
         <div className="mb-4 text-sm leading-5">
           <label htmlFor="username" className="block text-gray-400 mb-1">
             Username
@@ -40,12 +54,18 @@ function Signup() {
             id="username"
             {...register("username", { required: "Username is required" })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className={`w-full rounded-md border p-3 text-black focus:outline-none ${
+              errors.username ? "border-red-500" : "border-gray-700"
+            }`}
           />
           {errors.username && (
-            <p style={{ color: "red" }}>{errors.username.message}</p>
+            <p style={{ color: "red" }} className="mt-1 text-sm">
+              {errors.username.message}
+            </p>
           )}
         </div>
+
+        {/* Email Field */}
         <div className="mb-4 text-sm leading-5">
           <label htmlFor="email" className="block text-gray-400 mb-1">
             Email
@@ -61,12 +81,18 @@ function Signup() {
               },
             })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className={`w-full rounded-md border p-3 text-black focus:outline-none ${
+              errors.email ? "border-red-500" : "border-gray-700"
+            }`}
           />
           {errors.email && (
-            <p style={{ color: "red" }}>{errors.email.message}</p>
+            <p style={{ color: "red" }} className="mt-1 text-sm">
+              {errors.email.message}
+            </p>
           )}
         </div>
+
+        {/* Password Field */}
         <div className="mb-4 text-sm leading-5">
           <label htmlFor="password" className="block text-gray-400 mb-1">
             Password
@@ -82,50 +108,58 @@ function Signup() {
               },
             })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className={`w-full rounded-md border p-3 text-black focus:outline-none ${
+              errors.password ? "border-red-500" : "border-gray-700"
+            }`}
           />
           {errors.password && (
-            <p style={{ color: "red" }}>{errors.password.message}</p>
+            <p style={{ color: "red" }} className="mt-1 text-sm">
+              {errors.password.message}
+            </p>
           )}
         </div>
+
+        {/* Confirm Password Field */}
         <div className="mb-4 text-sm leading-5">
-          <label
-            htmlFor="conform-password"
-            className="block text-gray-400 mb-1"
-          >
-            Conform Password
+          <label htmlFor="confirm-password" className="block text-gray-400 mb-1">
+            Confirm Password
           </label>
           <input
             type="password"
-            id="conform-password"
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters long",
-              },
+            id="confirm-password"
+            {...register("confirmPassword", {
+              required: "Confirm Password is required",
+              validate: (value) =>
+                value === password || "Passwords do not match", // Custom validation to check if passwords match
             })}
             placeholder=""
-            className="w-full rounded-md border border-gray-700 bg-gray-900 p-3 text-gray-200 focus:border-purple-400 focus:outline-none"
+            className={`w-full rounded-md border p-3 text-black focus:outline-none ${
+              errors.confirmPassword ? "border-red-500" : "border-gray-700"
+            }`}
           />
-          {errors.password && (
-            <p style={{ color: "red" }}>{errors.password.message}</p>
+          {errors.confirmPassword && (
+            <p style={{ color: "red" }} className="mt-1 text-sm">
+              {errors.confirmPassword.message}
+            </p>
           )}
         </div>
+
+        {/* Submit Button */}
         <button
           type="submit"
           className="w-full rounded-md bg-purple-400 p-3 text-center text-gray-900 font-semibold"
         >
-          Sign in
+          Sign Up
         </button>
       </form>
+
       <p className="mt-6 text-center text-xs text-gray-400">
-        Already have an account.
+        Already have an account?
         <a
-          href="#"
-          className="text-gray-200 hover:underline hover:text-purple-400"
+          href="/login"
+          className="text-black hover:underline hover:text-purple-400"
         >
-          Sign up
+          Log in
         </a>
       </p>
     </div>

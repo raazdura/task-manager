@@ -1,211 +1,129 @@
-import React, { useState } from "react";
+import { useState, useContext } from "react";
+import { TaskContext } from "../context/taskContext"; // Import TaskContext
+import EditTask from "./EditTask";
+import axiosInstance from "../utils/axiosConfig";
+import { convertToLocalTime } from "../services/convertToLocalTime";
+import { toast } from "react-toastify"; // Import toast
+import "react-toastify/dist/ReactToastify.css"; // Import the Toast styles
 
 interface Task {
-  id: string;
-  name: string;
+  _id: string;
+  title: string;
+  description: string;
+  deadline: string;
   status: string;
 }
 
-const tasks: Task[] = [
-  { id: "1", name: "Task 1", status: "Pending" },
-  { id: "2", name: "Task 2", status: "Completed" },
-  { id: "3", name: "Task 3", status: "Pending" },
-  { id: "4", name: "Task 4", status: "Completed" },
-  { id: "5", name: "Task 5", status: "Pending" },
-  { id: "6", name: "Task 6", status: "Completed" },
-  { id: "7", name: "Task 7", status: "Pending" },
-  { id: "8", name: "Task 8", status: "Completed" },
-  { id: "9", name: "Task 9", status: "Pending" },
-  { id: "10", name: "Task 10", status: "Completed" },
-];
-
-const tasksPerPage = 5;
-
 function TaskList() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [popupAction, setPopupAction] = useState<"edit" | "delete" | "complete" | null>(null);
+  const { tasks, deleteTask, updateTaskStatus } = useContext(TaskContext); // Use TaskContext
 
-  const totalPages = Math.ceil(tasks.length / tasksPerPage);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
-  const handleEdit = (task: Task) => {
-    setSelectedTask(task);
-    setPopupAction("edit");
-    setIsPopupOpen(true);
-  };
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
 
-  const handleDelete = (task: Task) => {
-    setSelectedTask(task);
-    setPopupAction("delete");
-    setIsPopupOpen(true);
-  };
-
-  const handleComplete = (task: Task) => {
-    setSelectedTask(task);
-    setPopupAction("complete");
-    setIsPopupOpen(true);
-  };
-
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-    setSelectedTask(null);
-    setPopupAction(null);
-  };
-
-  const handleSubmitPopup = () => {
-    if (!selectedTask) return;
-
-    if (popupAction === "edit") {
-      // Perform the edit action (e.g., update task name)
-      console.log(`Editing task: ${selectedTask.name}`);
-      // Example: update task name logic here
-    } else if (popupAction === "delete") {
-      // Perform the delete action
-      console.log(`Deleting task: ${selectedTask.name}`);
-      // Example: delete task logic here
-    } else if (popupAction === "complete") {
-      // Perform the complete action (toggle task status)
-      const updatedStatus = selectedTask.status === "Completed" ? "Pending" : "Completed";
-      console.log(`Task completed: ${selectedTask.name}, status: ${updatedStatus}`);
-      // Example: update task status logic here
+  const handleDelete = async (taskId: string) => {
+    try {
+      const response = await axiosInstance.delete(`/tasks/${taskId}`);
+      deleteTask(response.data.task); // Remove the task from context
+      setIsModalOpen(false); // Close modal
+      setTaskToDelete(null); // Clear taskToDelete
+      toast.success("Task deleted successfully!"); // Show success toast
+    } catch (error) {
+      console.error("Error deleting task", error);
+      toast.error("Failed to delete task!"); // Show error toast
     }
-
-    handleClosePopup(); // Close popup after action
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+  const openDeleteModal = (task: Task) => {
+    setTaskToDelete(task); // Store the task to be deleted
+    setIsModalOpen(true); // Open the modal
   };
 
-  const currentTasks = tasks.slice(
-    (currentPage - 1) * tasksPerPage,
-    currentPage * tasksPerPage
-  );
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal without deleting
+    setTaskToDelete(null); // Clear taskToDelete
+  };
+
+  const openEditModel = (task: Task) => {
+    setTaskToEdit(task); // Store the task to be edited
+    setIsEditOpen(true); // Open the modal
+  };
+
+  const closeEdit = () => {
+    setIsEditOpen(false); // Close the modal without editing
+    setTaskToEdit(null); // Clear taskToEdit
+  };
+
+  const handleComplete = async (task: Task) => {
+    try {
+      const taskId = task._id;
+      const response = await axiosInstance.put(`/tasks/${taskId}/status`);
+      const updatedTask = response.data.task;
+
+      // Update the task status in the context
+      updateTaskStatus(updatedTask);
+      toast.success("Task status updated to completed!"); // Show success toast
+    } catch (error) {
+      console.error("Failed to update task status", error);
+      toast.error("Failed to update task status!"); // Show error toast
+    }
+  };
 
   return (
-    <div className="overflow-x-auto bg-gray-900 p-6 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold text-gray-200 mb-4">Task List</h2>
+    <div className="overflow-x-auto mt-4 bg-gray-900 rounded-lg">
       <table className="min-w-full bg-gray-800 text-gray-200 border border-gray-700">
         <thead>
           <tr>
-            <th className="px-4 py-2 border-b border-gray-600 text-left">Task</th>
+            <th className="px-4 py-2 border-b border-gray-600 text-left">Task Title</th>
+            <th className="px-4 py-2 border-b border-gray-600 text-left">Description</th>
+            <th className="px-4 py-2 border-b border-gray-600 text-left">Deadline</th>
             <th className="px-4 py-2 border-b border-gray-600 text-left">Status</th>
             <th className="px-4 py-2 border-b border-gray-600 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {currentTasks.map((task) => (
-            <tr key={task.id} className="hover:bg-gray-700">
-              <td className="px-4 py-2 border-b border-gray-600">{task.name}</td>
-              <td className="px-4 py-2 border-b border-gray-600">{task.status}</td>
+          {tasks.map((task) => (
+            <tr key={task._id} className="hover:bg-gray-700">
+              <td className="px-4 py-2 border-b border-gray-600">{task.title}</td>
+              <td className="px-4 py-2 border-b border-gray-600">{task.description}</td>
+              <td className="px-4 py-2 border-b border-gray-600">{convertToLocalTime(task.deadline)}</td>
               <td className="px-4 py-2 border-b border-gray-600">
-                <button
-                  onClick={() => handleEdit(task)}
-                  className="bg-blue-500 text-white py-1 px-3 rounded-md mr-2"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDelete(task)}
-                  className="bg-red-500 text-white py-1 px-3 rounded-md mr-2"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => handleComplete(task)}
-                  className="bg-green-500 text-white py-1 px-3 rounded-md"
-                >
-                  {task.status === "Completed" ? "Undo" : "Complete"}
-                </button>
+                <span className={`py-1 px-3 rounded-md text-semibold ${task.status === "completed" ? "bg-green-500" : "bg-yellow-500"}`}>
+                  {task.status}
+                </span>
+              </td>
+              <td className="px-4 py-2 border-b border-gray-600">
+                <button onClick={() => openEditModel(task)} className="bg-blue-500 text-white py-1 px-3 rounded-md mr-2">Edit</button>
+                <button onClick={() => openDeleteModal(task)} className="bg-red-500 text-white py-1 px-3 rounded-md mr-2">Delete</button>
+                <button onClick={() => handleComplete(task)} className="bg-green-500 text-white py-1 px-3 rounded-md">Complete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Pagination Controls */}
-      <div className="mt-4 flex justify-center">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-700 text-gray-200 rounded-md mr-2"
-        >
-          Previous
-        </button>
-        <span className="text-gray-200">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-700 text-gray-200 rounded-md ml-2"
-        >
-          Next
-        </button>
-      </div>
-
-      {/* Popup Modal */}
-      {isPopupOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-third p-6 rounded-lg w-1/3">
-            <h3 className="text-xl text-gray-200 mb-4">
-              {popupAction === "edit"
-                ? "Edit Task"
-                : popupAction === "delete"
-                ? "Delete Task"
-                : "Complete Task"}
-            </h3>
-            {popupAction === "edit" && selectedTask && (
-              <div>
-                <input
-                  type="text"
-                  defaultValue={selectedTask.name}
-                  className="w-full bg-gray-800 text-gray-200 p-2 rounded-md mb-4"
-                />
-                <button
-                  onClick={handleSubmitPopup}
-                  className="w-full bg-blue-500 text-gray-900 p-3 rounded-md"
-                >
-                  Save Changes
-                </button>
-              </div>
-            )}
-            {popupAction === "delete" && selectedTask && (
-              <div>
-                <p className="text-gray-200 mb-4">Are you sure you want to delete the task "{selectedTask.name}"?</p>
-                <button
-                  onClick={handleSubmitPopup}
-                  className="w-full bg-red-500 text-gray-900 p-3 rounded-md"
-                >
-                  Yes, Delete
-                </button>
-              </div>
-            )}
-            {popupAction === "complete" && selectedTask && (
-              <div>
-                <p className="text-gray-200 mb-4">
-                  Are you sure you want to mark the task "{selectedTask.name}" as{" "}
-                  {selectedTask.status === "Completed" ? "Pending" : "Completed"}?
-                </p>
-                <button
-                  onClick={handleSubmitPopup}
-                  className="w-full bg-green-500 text-gray-900 p-3 rounded-md"
-                >
-                  Yes, Complete
-                </button>
-              </div>
-            )}
-
-            <button
-              onClick={handleClosePopup}
-              className="w-full bg-gray-700 text-gray-200 p-3 rounded-md mt-4"
-            >
-              Cancel
-            </button>
+      {/* Delete Confirmation Modal */}
+      {isModalOpen && taskToDelete && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <div className="bg-gray-700 text-gray-200 p-6 rounded-lg shadow-lg w-1/3">
+            <h3 className="text-xl font-semibold mb-4">Confirm Deletion</h3>
+            <p>Are you sure you want to delete the task "{taskToDelete.title}"?</p>
+            <div className="mt-4 flex justify-end">
+              <button onClick={closeModal} className="bg-gray-500 text-white py-1 px-3 rounded-md mr-2">Cancel</button>
+              <button onClick={() => handleDelete(taskToDelete._id)} className="bg-red-500 text-white py-1 px-3 rounded-md">Delete</button>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Edit Task Modal */}
+      {isEditOpen && taskToEdit && (
+        <div className="fixed inset-0 flex justify-center items-center z-50">
+          <EditTask task={taskToEdit} closeEdit={closeEdit} />
+        </div>
+      )}  
     </div>
   );
 }

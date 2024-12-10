@@ -1,60 +1,38 @@
-import { Router, Request, Response } from 'express';
-import { Task } from '../models/task';
+import express from 'express';
+import taskController from '../controllers/tasks';
+import multer from 'multer';
 
-const router = Router();
-let tasks: Task[] = [];
+const router = express.Router();
 
-router.post('/', (req: Request, res: Response) => {
-    const task: Task = {
-      id: tasks.length + 1,
-      title: req.body.title,
-      description: req.body.description,
-      completed: false,
-    };
-  
-    tasks.push(task);
-    res.status(201).json(task);
-  });
+const upload = multer();
 
-  router.get('/', (req: Request, res: Response) => {
-    res.json(tasks);
-  });
-  
+// Create a task
+router.post('/tasks', upload.none(), taskController.createTask);
 
-  router.get('/:id', (req: Request, res: Response) => {
-    const task = tasks.find((t) => t.id === parseInt(req.params.id));
-  
-    if (!task) {
-      res.status(404).send('Task not found');
-    } else {
-      res.json(task);
-    }
-  });
-  
-  router.put('/:id', (req: Request, res: Response) => {
-    const task = tasks.find((t) => t.id === parseInt(req.params.id));
-  
-    if (!task) {
-      res.status(404).send('Task not found');
-    } else {
-      task.title = req.body.title || task.title;
-      task.description = req.body.description || task.description;
-      task.completed = req.body.completed || task.completed;
-  
-      res.json(task);
-    }
-  });
+router.put('/update', upload.none(), taskController.updateTask);
 
-  router.delete('/:id', (req: Request, res: Response) => {
-    const index = tasks.findIndex((t) => t.id === parseInt(req.params.id));
-  
-    if (index === -1) {
-      res.status(404).send('Task not found');
-    } else {
-      tasks.splice(index, 1);
-      res.status(204).send();
-    }
-  });
-  
+// Update task title
+router.put('/tasks/:taskId/title', upload.none(), taskController.updateTitle);
+
+// Update task description
+router.put('/tasks/:taskId/description', upload.none(), taskController.updateDescription);
+
+// Update task deadline
+router.put('/tasks/:taskId/deadline', upload.none(), taskController.updateDeadline);
+
+// Update task status
+router.put('/:taskId/status', upload.none(), taskController.updateStatus);
+
+// Delete a task
+router.delete('/:taskId', taskController.deleteTask);
+
+// Fetch task details by ID
+// router.get('/tasks/:taskId', taskController.getTaskDetails);
+
+// Fetch list of tasks
+router.get('/tasks', taskController.getTasksList);
+
+// Search tasks by title
+router.post('/search', upload.none(),  taskController.searchTasksByTitle);
 
 export default router;

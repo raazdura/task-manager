@@ -1,0 +1,44 @@
+Create a task
+Method: POST
+Route: /api/tasks/tasks
+Description: Creates a new task.
+
+Update task title
+Method: PUT
+Route: /api/tasks/tasks/:taskId/title
+Description: Updates the title of a specific task identified by taskId.
+
+Update task description
+Method: PUT
+Route: /api/tasks/tasks/:taskId/description
+Description: Updates the description of a specific task identified by taskId.
+
+Update task deadline
+Method: PUT
+Route: /api/tasks/tasks/:taskId/deadline
+Description: Updates the deadline of a specific task identified by taskId.
+
+Update task status
+Method: PUT
+Route: /api/tasks/tasks/:taskId/status
+Description: Updates the status of a specific task identified by taskId.
+
+Delete a task
+Method: DELETE
+Route: /api/tasks/tasks/:taskId
+Description: Deletes a specific task identified by taskId.
+
+Fetch task details by ID
+Method: GET
+Route: /api/tasks/tasks/:taskId
+Description: Retrieves the details of a specific task identified by taskId.
+
+Fetch list of tasks
+Method: GET
+Route: /api/tasks/tasks
+Description: Retrieves a list of all tasks.
+
+Search tasks by title
+Method: GET
+Route: /api/tasks/tasks/search
+Description: Searches for tasks by their title.
