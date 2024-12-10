@@ -2,7 +2,7 @@
 
 ## Overview
 
-Welcome to the Task Manager Web App repository! This project provides a responsive web-based task manager that allows users to create, manage and track tasks efficiently.
+Welcome to the Task Manager Web App repository! This project provides a responsive web-based task manager that allows users to create, managetasks efficiently.
 
 
 ## Features
@@ -50,6 +50,6 @@ Mark tasks as completed by clicking the "Completed" button.
 Remove tasks by clicking the "Delete" button.
 
 Backend Endpoints
-All End Points And Necessary ENV variables for backend are given TaskEndpoints.txt inside backend folder
+All End Points And Necessary ENV variables for backend are given Endpoints.txt inside backend folder
 
 Happy task managing! 🚀
