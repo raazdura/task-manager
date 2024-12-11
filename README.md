@@ -24,6 +24,7 @@ Welcome to the Task Manager Web App repository! This project provides a responsi
 
 - GitHub
 - A modern web browser
+- Docker Desktop (If you want to run docker file)
 
 ### Installation
 
@@ -31,7 +32,12 @@ Welcome to the Task Manager Web App repository! This project provides a responsi
 
    ```bash
    git clone https://github.com/yraazdura/task-manager-web-app.git
+
 Open the project folder in your code editor.
+
+Docker
+-docker compose up
+-Open browser: http://localhost:5173/
 
 Frontend
 -cd frontend
@@ -50,6 +56,6 @@ Mark tasks as completed by clicking the "Completed" button.
 Remove tasks by clicking the "Delete" button.
 
 Backend Endpoints
-All End Points And Necessary ENV variables for backend are given Endpoints.txt inside backend folder
+All End Points api are given in Endpoints.txt inside backend folder.
 
 Happy task managing! 🚀
