@@ -7,7 +7,7 @@ import { notFound, errorHandler } from "./middlewares/index.middleware";
 import userRoutes from './routes/users';
 import taskRoutes from './routes/tasks';
 
-import dotenv from 'dotenv';
+import dotenv from 'dotenv'; 
 dotenv.config();
  
 import { protect } from "./middlewares/auth";
@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 
 
 app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+  res.send("Hello! Welcome to the Task Manager API.");
 });
 
 
@@ -51,6 +51,10 @@ app.use('/api/tasks', protect, taskRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
+
+// app.listen(process.env.PORT || 7000, () => {
+//   console.log(`[server]: Server is running at http://localhost:${process.env.PORT || 7000}`);
+// });
 
 mongoose
   .connect(process.env.MONGO_URI)

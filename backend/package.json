@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon --poll --flies scr/index.ts",
     "start": "nodemon",
     "build": "tsc",
     "serve": "node dist/index.js"
